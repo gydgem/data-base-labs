@@ -1,0 +1,100 @@
+erDiagram
+    INCIDENT {
+        UUID id PK
+        string category
+        string legal_article
+        timestamp start_date
+        timestamp end_date
+        text description
+        string status
+        timestamp registration_date
+        timestamp close_date
+        boolean is_cybercrime
+        jsonb cyber_attributes
+        jsonb metadata
+        UUID employee_id FK
+    }
+
+    LOCATION {
+        UUID id PK
+        string address
+        decimal latitude
+        decimal longitude
+        string territory_type
+        text incident_history
+    }
+
+    PERSON {
+        UUID id PK
+        string full_name
+        date birth_date
+        string residence_address
+        string contact_info
+        text criminal_record
+        boolean sensitive_data
+    }
+
+    EMPLOYEE {
+        UUID id PK
+        string personnel_number
+        string full_name
+        string rank
+        string position
+        string department
+        string contact_info
+    }
+
+    RESPONSE_ACTION {
+        UUID id PK
+        UUID incident_id FK
+        string action_type
+        UUID employee_id FK
+        timestamp action_date
+        text details
+    }
+
+    STATUS_HISTORY {
+        UUID id PK
+        UUID incident_id FK
+        string old_status
+        string new_status
+        UUID employee_id FK
+        timestamp change_date
+        text comment
+    }
+
+    DISPATCH_RECORD {
+        UUID id PK
+        string source
+        timestamp receive_time
+        string applicant_contact
+        text brief_description
+        UUID employee_id FK
+        UUID incident_id FK
+    }
+
+    INCIDENT_LOCATION {
+        UUID incident_id FK
+        UUID location_id FK
+    }
+
+    INCIDENT_PERSON {
+        UUID incident_id FK
+        UUID person_id FK
+        string participation_type
+    }
+
+    INCIDENT ||--o{ RESPONSE_ACTION : "has"
+    INCIDENT ||--o{ STATUS_HISTORY : "has_history"
+    INCIDENT ||--o{ DISPATCH_RECORD : "referenced_by"
+    INCIDENT }o--|| EMPLOYEE : "registered_by"
+    INCIDENT }o--o{ LOCATION : "occurred_at"
+    INCIDENT }o--o{ PERSON : "involves"
+    EMPLOYEE ||--o{ RESPONSE_ACTION : "executes"
+    EMPLOYEE ||--o{ STATUS_HISTORY : "changes_status"
+    EMPLOYEE ||--o{ DISPATCH_RECORD : "processes"
+    
+    INCIDENT_LOCATION }o--|| INCIDENT : "incident"
+    INCIDENT_LOCATION }o--|| LOCATION : "location"
+    INCIDENT_PERSON }o--|| INCIDENT : "incident"
+    INCIDENT_PERSON }o--|| PERSON : "person"
